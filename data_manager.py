@@ -67,6 +67,8 @@ class DataManager:
         """Build hash map index for O(1) voter card lookup"""
         self.voter_card_index.clear()
         if self.df is not None:
+            # Reset index to ensure continuous 0-based indexing
+            self.df.reset_index(drop=True, inplace=True)
             for idx, row in self.df.iterrows():
                 voter_card = str(row['Số thẻ cử tri']).strip()
                 if voter_card:

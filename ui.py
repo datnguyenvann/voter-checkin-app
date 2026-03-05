@@ -134,43 +134,78 @@ class VoterAttendanceUI:
         right_container = ttk.Frame(self.root, padding="10")
         right_container.pack(side=tk.RIGHT, fill=tk.Y, padx=(0, 10))
         
-        # Input section
-        input_frame = ttk.LabelFrame(
+        # Section 1: Quick Check-in (Điểm danh nhanh)
+        checkin_frame = ttk.LabelFrame(
             right_container,
-            text="Điểm danh & Xác minh",
+            text="⚡ Điểm danh nhanh",
             padding="15"
         )
-        input_frame.pack(fill=tk.X, pady=(0, 20))
+        checkin_frame.pack(fill=tk.X, pady=(0, 15))
         
-        # Voter card input
+        # Voter card input for quick check-in
         ttk.Label(
-            input_frame,
+            checkin_frame,
             text="Số thẻ cử tri:",
             font=('Segoe UI', 9, 'bold')
         ).pack(anchor=tk.W, pady=(0, 5))
         
-        self.entry_voter_card = ttk.Entry(input_frame, width=30, font=('Segoe UI', 10))
-        self.entry_voter_card.pack(fill=tk.X, pady=(0, 15))
+        self.entry_voter_card = ttk.Entry(checkin_frame, width=30, font=('Segoe UI', 11))
+        self.entry_voter_card.pack(fill=tk.X, pady=(0, 10))
         self.entry_voter_card.bind('<Return>', lambda e: self._mark_attendance())
+        
+        # Check-in button
+        self.btn_checkin = ttk.Button(
+            checkin_frame,
+            text="✓ Điểm danh (hoặc nhấn Enter)",
+            command=self._mark_attendance,
+            state=tk.DISABLED
+        )
+        self.btn_checkin.pack(fill=tk.X)
+        
+        # Instruction label
+        ttk.Label(
+            checkin_frame,
+            text="💡 Nhập số thẻ và nhấn Enter",
+            font=('Segoe UI', 8),
+            foreground='#6c757d'
+        ).pack(anchor=tk.W, pady=(5, 0))
+        
+        # Section 2: Verification (Xác minh)
+        verify_frame = ttk.LabelFrame(
+            right_container,
+            text="🔍 Xác minh thông tin",
+            padding="15"
+        )
+        verify_frame.pack(fill=tk.X, pady=(0, 15))
+        
+        # Voter card for verification
+        ttk.Label(
+            verify_frame,
+            text="Số thẻ cử tri:",
+            font=('Segoe UI', 9, 'bold')
+        ).pack(anchor=tk.W, pady=(0, 5))
+        
+        self.entry_verify_card = ttk.Entry(verify_frame, width=30, font=('Segoe UI', 10))
+        self.entry_verify_card.pack(fill=tk.X, pady=(0, 10))
         
         # National ID input
         ttk.Label(
-            input_frame,
+            verify_frame,
             text="Số CCCD:",
             font=('Segoe UI', 9, 'bold')
         ).pack(anchor=tk.W, pady=(0, 5))
         
-        self.entry_national_id = ttk.Entry(input_frame, width=30, font=('Segoe UI', 10))
-        self.entry_national_id.pack(fill=tk.X, pady=(0, 15))
+        self.entry_national_id = ttk.Entry(verify_frame, width=30, font=('Segoe UI', 10))
+        self.entry_national_id.pack(fill=tk.X, pady=(0, 10))
         
         # Verify button
         self.btn_verify = ttk.Button(
-            input_frame,
-            text="✓ Xác minh thông tin",
+            verify_frame,
+            text="✓ Xác minh",
             command=self._verify_voter,
             state=tk.DISABLED
         )
-        self.btn_verify.pack(fill=tk.X, pady=(5, 0))
+        self.btn_verify.pack(fill=tk.X)
         
         # Statistics section
         stats_frame = ttk.LabelFrame(
@@ -273,7 +308,9 @@ class VoterAttendanceUI:
             self._populate_table()
             self._update_statistics()
             self.btn_export.config(state=tk.NORMAL)
+            self.btn_checkin.config(state=tk.NORMAL)
             self.btn_verify.config(state=tk.NORMAL)
+            self.entry_voter_card.focus()  # Auto focus to check-in field
             messagebox.showinfo("Thành công", message)
         else:
             self.lbl_file_info.config(text="Lỗi tải dữ liệu")
@@ -379,7 +416,7 @@ class VoterAttendanceUI:
             messagebox.showwarning("Cảnh báo", "Vui lòng tải file Excel trước")
             return
         
-        voter_card = self.entry_voter_card.get().strip()
+        voter_card = self.entry_verify_card.get().strip()
         national_id = self.entry_national_id.get().strip()
         
         if not voter_card or not national_id:
