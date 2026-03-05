@@ -1,5 +1,54 @@
 # Release Notes - Voter Attendance Application
 
+## Version 2.1 - March 5, 2026
+
+### 🎉 New Features
+
+#### Save Reminder on Exit
+- **Automatic Warning**: Application now warns user before closing if there are unsaved changes
+- **Smart Detection**: Tracks when attendance is marked and data needs to be saved
+- **Three Options**:
+  - **Yes**: Opens save dialog to export data, then closes
+  - **No**: Asks for confirmation, then closes without saving
+  - **Cancel**: Returns to application without closing
+- **User-Friendly**: Clear Vietnamese messages explaining the consequences
+
+### ✨ Benefits
+
+1. **Data Protection**: Prevents accidental data loss when closing application
+2. **Peace of Mind**: Users can confidently work knowing they'll be reminded to save
+3. **Flexible**: Users can choose to save, discard, or cancel based on their needs
+4. **Clear Messages**: Easy-to-understand warnings in Vietnamese
+
+### 🔧 Technical Details
+
+- Tracks unsaved changes with `has_unsaved_changes` flag
+- Sets flag to `True` when attendance is marked
+- Resets flag to `False` after successful export
+- Uses `WM_DELETE_WINDOW` protocol to intercept close event
+- Provides three-way dialog (Yes/No/Cancel) for user choice
+- Additional confirmation dialog if user chooses not to save
+
+### 📊 User Flow
+
+```
+Close App → Has Unsaved Changes?
+                ↓ Yes
+            Show Warning Dialog
+                ↓
+    ┌───────────┼───────────┐
+    ↓           ↓           ↓
+  Yes          No        Cancel
+    ↓           ↓           ↓
+Save & Close  Confirm?  Return to App
+              ↓
+         Yes      No
+          ↓       ↓
+       Close   Return
+```
+
+---
+
 ## Version 2.0 - March 5, 2026
 
 ### 🎉 New Features

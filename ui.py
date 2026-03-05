@@ -24,6 +24,12 @@ class VoterAttendanceUI:
         self.root.geometry("1200x700")
         self.root.minsize(1000, 600)
         
+        # Flag to track if data has been modified
+        self.has_unsaved_changes = False
+        
+        # Setup close handler
+        self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
+        
         # Setup UI components
         self._setup_ui()
         
@@ -365,6 +371,9 @@ class VoterAttendanceUI:
             self._update_table_row(voter_card)
             self._update_statistics()
             
+            # Mark as having unsaved changes
+            self.has_unsaved_changes = True
+            
             # Highlight and scroll to row
             self._highlight_voter_card(voter_card)
             
@@ -474,6 +483,40 @@ class VoterAttendanceUI:
         success, message = self.data_manager.export_to_excel(file_path)
         
         if success:
+            # Reset unsaved changes flag
+            self.has_unsaved_changes = False
             messagebox.showinfo("Thành công", message)
         else:
             messagebox.showerror("Lỗi", message)
+    
+    def _on_closing(self):
+        """Handle window close event with save reminder"""
+        # Check if there are unsaved changes
+        if self.has_unsaved_changes:
+            response = messagebox.askyesnocancel(
+                "Cảnh báo",
+                "Đã có dữ liệu điểm danh chưa được lưu!\n\n"
+                "Bạn có muốn lưu dữ liệu trước khi thoát?\n\n"
+                "⚠ Nếu không lưu, dữ liệu điểm danh sẽ bị mất!",
+                icon='warning'
+            )
+            
+            if response is None:  # Cancel
+                return
+            elif response:  # Yes - save first
+                self._export_excel_file()
+                # Only close if save was successful (user didn't cancel save dialog)
+                if not self.has_unsaved_changes:
+                    self.root.destroy()
+            else:  # No - close without saving
+                confirm = messagebox.askokcancel(
+                    "Xác nhận",
+                    "⚠ Bạn chắc chắn muốn thoát mà KHÔNG lưu?\n\n"
+                    "Tất cả dữ liệu điểm danh sẽ bị mất!",
+                    icon='warning'
+                )
+                if confirm:
+                    self.root.destroy()
+        else:
+            # No unsaved changes, just close
+            self.root.destroy()
