@@ -202,3 +202,6 @@ For technical issues:
 **Last Updated:** March 5, 2026  
 **Platform:** Windows 10/11  
 **Language:** Vietnamese (UI), English (Code)
+
+## 📞 Build release file
+python -m PyInstaller --onefile --windowed --name VoterAttendance --hidden-import=openpyxl --hidden-import=pandas main.py --clean
