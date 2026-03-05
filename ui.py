@@ -101,7 +101,7 @@ class VoterAttendanceUI:
         # Treeview
         self.tree = ttk.Treeview(
             tree_frame,
-            columns=("name", "voter_card", "national_id", "status"),
+            columns=("stt", "name", "voter_card", "national_id", "status"),
             show="headings",
             yscrollcommand=vsb.set,
             xscrollcommand=hsb.set,
@@ -112,16 +112,18 @@ class VoterAttendanceUI:
         hsb.config(command=self.tree.xview)
         
         # Define columns
+        self.tree.heading("stt", text="STT")
         self.tree.heading("name", text="Họ và tên")
         self.tree.heading("voter_card", text="Số thẻ cử tri")
         self.tree.heading("national_id", text="Số CCCD")
         self.tree.heading("status", text="Trạng thái")
         
         # Column widths
-        self.tree.column("name", width=250, minwidth=150)
-        self.tree.column("voter_card", width=150, minwidth=100)
-        self.tree.column("national_id", width=150, minwidth=100)
-        self.tree.column("status", width=150, minwidth=100)
+        self.tree.column("stt", width=50, minwidth=50, anchor=tk.CENTER)
+        self.tree.column("name", width=220, minwidth=150)
+        self.tree.column("voter_card", width=130, minwidth=100)
+        self.tree.column("national_id", width=130, minwidth=100)
+        self.tree.column("status", width=130, minwidth=100)
         
         # Configure tags for styling
         self.tree.tag_configure('attended', background='#d4edda', foreground='#155724')
@@ -329,7 +331,9 @@ class VoterAttendanceUI:
         for idx, record in enumerate(records):
             name, voter_card, national_id, status = record
             tag = 'attended' if status == 'Đã điểm danh' else 'not_attended'
-            self.tree.insert('', tk.END, values=record, tags=(tag,), iid=str(idx))
+            # Add row number (STT) as first column
+            record_with_stt = (idx + 1, name, voter_card, national_id, status)
+            self.tree.insert('', tk.END, values=record_with_stt, tags=(tag,), iid=str(idx))
     
     def _update_statistics(self):
         """Update statistics labels"""
@@ -393,10 +397,12 @@ class VoterAttendanceUI:
             records = self.data_manager.get_all_records()
             if idx < len(records):
                 record = records[idx]
+                # Add STT to record
+                record_with_stt = (idx + 1,) + record
                 # Update treeview item
                 item_id = str(idx)
                 if self.tree.exists(item_id):
-                    self.tree.item(item_id, values=record, tags=('attended',))
+                    self.tree.item(item_id, values=record_with_stt, tags=('attended',))
     
     def _highlight_voter_card(self, voter_card: str):
         """Highlight and scroll to voter card in table"""
