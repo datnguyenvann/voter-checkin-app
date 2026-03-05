@@ -101,7 +101,7 @@ class VoterAttendanceUI:
         # Treeview
         self.tree = ttk.Treeview(
             tree_frame,
-            columns=("stt", "name", "voter_card", "national_id", "status"),
+            columns=("stt", "name", "voter_card", "national_id", "status", "timestamp"),
             show="headings",
             yscrollcommand=vsb.set,
             xscrollcommand=hsb.set,
@@ -117,13 +117,15 @@ class VoterAttendanceUI:
         self.tree.heading("voter_card", text="Số thẻ cử tri")
         self.tree.heading("national_id", text="Số CCCD")
         self.tree.heading("status", text="Trạng thái")
+        self.tree.heading("timestamp", text="Thời gian điểm danh")
         
         # Column widths
         self.tree.column("stt", width=50, minwidth=50, anchor=tk.CENTER)
-        self.tree.column("name", width=220, minwidth=150)
-        self.tree.column("voter_card", width=130, minwidth=100)
-        self.tree.column("national_id", width=130, minwidth=100)
-        self.tree.column("status", width=130, minwidth=100)
+        self.tree.column("name", width=180, minwidth=120)
+        self.tree.column("voter_card", width=120, minwidth=100)
+        self.tree.column("national_id", width=120, minwidth=100)
+        self.tree.column("status", width=120, minwidth=100)
+        self.tree.column("timestamp", width=150, minwidth=130)
         
         # Configure tags for styling
         self.tree.tag_configure('attended', background='#d4edda', foreground='#155724')
@@ -329,10 +331,10 @@ class VoterAttendanceUI:
         
         # Insert records with appropriate tags
         for idx, record in enumerate(records):
-            name, voter_card, national_id, status = record
+            name, voter_card, national_id, status, timestamp = record
             tag = 'attended' if status == 'Đã điểm danh' else 'not_attended'
             # Add row number (STT) as first column
-            record_with_stt = (idx + 1, name, voter_card, national_id, status)
+            record_with_stt = (idx + 1, name, voter_card, national_id, status, timestamp)
             self.tree.insert('', tk.END, values=record_with_stt, tags=(tag,), iid=str(idx))
     
     def _update_statistics(self):

@@ -6,6 +6,7 @@ Optimized for 5,000-20,000 records with O(1) lookup performance
 
 import pandas as pd
 from typing import Dict, Optional, Tuple, List
+from datetime import datetime
 
 
 class DataManager:
@@ -49,6 +50,7 @@ class DataManager:
             
             # Add attendance status column
             df['Trạng thái'] = 'Chưa điểm danh'
+            df['Thời gian điểm danh'] = ''
             
             # Store dataframe
             self.df = df
@@ -101,8 +103,9 @@ class DataManager:
             full_name = self.df.at[idx, 'Họ và tên']
             return 'ALREADY_ATTENDED', full_name
         
-        # Mark as attended
+        # Mark as attended with timestamp
         self.df.at[idx, 'Trạng thái'] = 'Đã điểm danh'
+        self.df.at[idx, 'Thời gian điểm danh'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         full_name = self.df.at[idx, 'Họ và tên']
         
         return 'SUCCESS', full_name
@@ -155,7 +158,8 @@ class DataManager:
                 row['Họ và tên'],
                 row['Số thẻ cử tri'],
                 row['Số CCCD'],
-                row['Trạng thái']
+                row['Trạng thái'],
+                row['Thời gian điểm danh']
             ))
         return records
     

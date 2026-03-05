@@ -9,6 +9,7 @@ A lightweight, fully offline Windows desktop application for tracking voter atte
 - **Simple UI**: Clean interface designed for non-technical users
 - **Quick Check-in**: Enter voter card number and press Enter
 - **Identity Verification**: Cross-check voter card with national ID
+- **Real-time Timestamp**: Automatically records check-in time
 - **Real-time Statistics**: Track attendance counts instantly
 - **Excel Integration**: Import and export voter data
 - **Portable EXE**: Single executable file for easy deployment
